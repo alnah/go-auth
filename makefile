@@ -43,3 +43,18 @@ drop_db:
 add_migration:
 	migrate create -ext sql -dir db/migration -seq $(NAME)
 .PHONY: add_migration
+
+# This target applies database migrations to the PostgreSQL database.
+migrate_up:
+	migrate \
+	-path db/migration \
+	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_NAME}?sslmode=disable" \
+	-verbose up
+.PHONY: migrate_up
+
+# This target rolls back the last applied database migration.
+migrate_down:
+	migrate \
+	-path db/migration \
+	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_NAME}?sslmode=disable" \
+	-verbose down

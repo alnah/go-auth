@@ -5,7 +5,7 @@
 # POSTGRES_IP_ADDRESS: The IP address for the PostgreSQL container
 # POSTGRES_PORT: The port for PostgreSQL
 
-# Load environment variables from dev.env
+# Load environment variables from app.env
 include app.env
 
 # This target runs a PostgreSQL container with specified environment variables

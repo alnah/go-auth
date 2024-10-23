@@ -58,3 +58,4 @@ migrate_down:
 	-path db/migration \
 	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_NAME}?sslmode=disable" \
 	-verbose down
+.PHONY: migrate_down

@@ -29,3 +29,7 @@ createdb:
 	--owner=${POSTGRES_USER} \
 	${POSTGRES_NAME}
 .PHONY: createdb
+
+dropdb:
+	docker exec -it auth_postgres17 dropdb ${POSTGRES_NAME}
+.PHONY: dropdb

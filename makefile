@@ -9,6 +9,7 @@
 # This target runs a PostgreSQL container with specified environment variables
 run_postgres:
 	docker run \
+	-d \
 	--name auth_postgres17 \
 	-e POSTGRES_USER=${POSTGRES_USER} \
 	-e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
@@ -49,7 +50,7 @@ migrate_up:
 	migrate \
 	-path db/migration \
 	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_NAME}?sslmode=disable" \
-	-verbose up
+	-verbose up || { echo "Migration failed"; exit 1; }
 .PHONY: migrate_up
 
 # This target rolls back the last applied database migration.
@@ -57,5 +58,9 @@ migrate_down:
 	migrate \
 	-path db/migration \
 	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_NAME}?sslmode=disable" \
-	-verbose down
+	-verbose down || { echo "Migration failed"; exit 1; }
 .PHONY: migrate_down
+
+sqlc:
+	sqlc generate
+.PHONY: sqlc

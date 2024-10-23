@@ -6,7 +6,8 @@
 # POSTGRES_HOST_PORT: The port on the host for PostgreSQL
 # POSTGRES_CONTAINER_PORT: The port inside the container for PostgreSQL
 
-postgres:
+# This target runs a PostgreSQL container with specified environment variables
+run_postgres:
 	docker run \
 	--name auth_postgres17 \
 	-e POSTGRES_USER=${POSTGRES_USER} \
@@ -23,13 +24,22 @@ postgres:
 	postgres:17-alpine
 .PHONY: postgres
 
-createdb:
+# This target creates a PostgreSQL database using the specified username and 
+# owner.
+create_db:
 	docker exec -it auth_postgres17 createdb \
 	--username=${POSTGRES_USER} \
 	--owner=${POSTGRES_USER} \
 	${POSTGRES_NAME}
 .PHONY: createdb
 
-dropdb:
+# This target drops the specified PostgreSQL database using the provided name.
+drop_db:
 	docker exec -it auth_postgres17 dropdb ${POSTGRES_NAME}
 .PHONY: dropdb
+
+# This target adds a new migration file to the database schema.
+# User muse provide a NAME variable, like 'add_migration NAME=migration_name'.
+add_migration:
+	migrate create -ext sql -dir db/migration -seq $(NAME)
+.PHONY: add_migration

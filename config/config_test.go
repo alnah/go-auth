@@ -31,7 +31,6 @@ POSTGRES_PORT=5432
 		require.Equal(t, "5432", config.PostgresPort)
 	})
 
-	// Sad case: missing configuration file
 	t.Run("Missing File", func(t *testing.T) {
 		_, err := LoadConfig(".", "invalid")
 		require.Error(t, err)

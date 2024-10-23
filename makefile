@@ -3,8 +3,10 @@
 # POSTGRES_USER: The username for the PostgreSQL database
 # POSTGRES_PASSWORD: The password for the PostgreSQL database
 # POSTGRES_IP_ADDRESS: The IP address for the PostgreSQL container
-# POSTGRES_HOST_PORT: The port on the host for PostgreSQL
-# POSTGRES_CONTAINER_PORT: The port inside the container for PostgreSQL
+# POSTGRES_PORT: The port for PostgreSQL
+
+# Load environment variables from dev.env
+include app.env
 
 # This target runs a PostgreSQL container with specified environment variables
 run_postgres:
@@ -13,7 +15,7 @@ run_postgres:
 	--name auth_postgres17 \
 	-e POSTGRES_USER=${POSTGRES_USER} \
 	-e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
-	-p ${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT} \
+	-p ${POSTGRES_PORT}:${POSTGRES_PORT} \
 	-h ${POSTGRES_IP_ADDRESS} \
 	-v postgres_data:/var/lib/postgresql/data \
 	--restart unless-stopped \
@@ -49,7 +51,7 @@ add_migration:
 migrate_up:
 	migrate \
 	-path db/migration \
-	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_NAME}?sslmode=disable" \
+	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_PORT}/${POSTGRES_NAME}?sslmode=disable" \
 	-verbose up || { echo "Migration failed"; exit 1; }
 .PHONY: migrate_up
 
@@ -57,7 +59,7 @@ migrate_up:
 migrate_down:
 	migrate \
 	-path db/migration \
-	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_CONTAINER_PORT}/${POSTGRES_NAME}?sslmode=disable" \
+	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_PORT}/${POSTGRES_NAME}?sslmode=disable" \
 	-verbose down || { echo "Migration failed"; exit 1; }
 .PHONY: migrate_down
 

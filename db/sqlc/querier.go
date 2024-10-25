@@ -10,6 +10,7 @@ import (
 
 type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (UserCore, error)
+	GetUser(ctx context.Context, email string) (UserCore, error)
 }
 
 var _ Querier = (*Queries)(nil)

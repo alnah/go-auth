@@ -2,27 +2,28 @@
 # POSTGRES_NAME: The name of the PostgreSQL database to create
 # POSTGRES_USER: The username for the PostgreSQL database
 # POSTGRES_PASSWORD: The password for the PostgreSQL database
-# POSTGRES_IP_ADDRESS: The IP address for the PostgreSQL container
-# POSTGRES_PORT: The port for PostgreSQL
+# POSTGRES_HOST: The IP address for the PostgreSQL container
 
-# Load environment variables from app.env
-include app.env
+# Load environment variables from the specified env file or default to dev.env
+# User must provide an ENV variable, like 'make ENV="prod" <target>'.
+ENV ?= dev
+include .env/$(ENV).env
 
-# This target runs a PostgreSQL container with specified environment variables
+# This target runs a PostgreSQL container widockth specified environment variables
 run_postgres:
 	docker run \
 	-d \
-	--name auth_postgres17 \
+	--name ${POSTGRES_NAME}_${ENV}_postgres17 \
 	-e POSTGRES_USER=${POSTGRES_USER} \
 	-e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
-	-p ${POSTGRES_PORT}:${POSTGRES_PORT} \
-	-h ${POSTGRES_IP_ADDRESS} \
-	-v postgres_data:/var/lib/postgresql/data \
+	-p ${POSTGRES_PORT}:5432 \
+	-h ${POSTGRES_HOST} \
+	-v data_${POSTGRES_NAME}_${ENV}_postgres17:/var/lib/postgresql/data \
 	--restart unless-stopped \
 	--health-cmd="pg_isready -U ${POSTGRES_USER}" \
 	--health-interval=10s \
 	--health-timeout=5s \
-	--health-retries=5 \
+	--health-retries=5 \a
 	--network=bridge \
 	postgres:17-alpine
 .PHONY: postgres
@@ -30,7 +31,7 @@ run_postgres:
 # This target creates a PostgreSQL database using the specified username and 
 # owner.
 create_db:
-	docker exec -it auth_postgres17 createdb \
+	docker exec -it ${POSTGRES_NAME}_${ENV}_postgres17 createdb \
 	--username=${POSTGRES_USER} \
 	--owner=${POSTGRES_USER} \
 	${POSTGRES_NAME}
@@ -38,11 +39,11 @@ create_db:
 
 # This target drops the specified PostgreSQL database using the provided name.
 drop_db:
-	docker exec -it auth_postgres17 dropdb ${POSTGRES_NAME}
+	docker exec -it ${POSTGRES_NAME}_${ENV}_postgres17 dropdb ${POSTGRES_NAME}
 .PHONY: dropdb
 
 # This target adds a new migration file to the database schema.
-# User muse provide a NAME variable, like 'add_migration NAME=migration_name'.
+# User must provide a NAME variable, like 'add_migration NAME=migration_name'.
 add_migration:
 	migrate create -ext sql -dir db/migration -seq $(NAME)
 .PHONY: add_migration
@@ -51,7 +52,7 @@ add_migration:
 migrate_up:
 	migrate \
 	-path db/migration \
-	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_PORT}/${POSTGRES_NAME}?sslmode=disable" \
+	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_NAME}?sslmode=disable" \
 	-verbose up || { echo "Migration failed"; exit 1; }
 .PHONY: migrate_up
 
@@ -59,7 +60,7 @@ migrate_up:
 migrate_down:
 	migrate \
 	-path db/migration \
-	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP_ADDRESS}:${POSTGRES_PORT}/${POSTGRES_NAME}?sslmode=disable" \
+	-database "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_NAME}?sslmode=disable" \
 	-verbose down || { echo "Migration failed"; exit 1; }
 .PHONY: migrate_down
 

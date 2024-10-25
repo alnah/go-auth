@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
 // RandomString generates a random string of the specified length.
 func RandomString(n uint) string {

@@ -15,7 +15,7 @@ func TestLoadConfig(t *testing.T) {
 POSTGRES_NAME=test_db
 POSTGRES_USER=test_user
 POSTGRES_PASSWORD=test_pass
-POSTGRES_IP_ADDRESS=127.0.0.1
+POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 `), 0644)
 		require.NoError(t, err)
@@ -27,7 +27,7 @@ POSTGRES_PORT=5432
 		require.Equal(t, "test_db", config.PostgresName)
 		require.Equal(t, "test_user", config.PostgresUser)
 		require.Equal(t, "test_pass", config.PostgresPassword)
-		require.Equal(t, "127.0.0.1", config.PostgresIpAddress)
+		require.Equal(t, "localhost", config.PostgresHost)
 		require.Equal(t, "5432", config.PostgresPort)
 	})
 
@@ -43,7 +43,7 @@ POSTGRES_NAME=test_db
 POSTGRES_USER=test_user
 POSTGRES_PASSWORD=test_pass
 INVALID_LINE
-POSTGRES_IP_ADDRESS=127.0.0.1
+POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 `), 0644)
 		require.NoError(t, err)

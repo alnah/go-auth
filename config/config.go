@@ -9,11 +9,11 @@ import (
 
 // Config stores all configuration of the application.
 type Config struct {
-	PostgresName      string `mapstructure:"POSTGRES_NAME"`
-	PostgresUser      string `mapstructure:"POSTGRES_USER"`
-	PostgresPassword  string `mapstructure:"POSTGRES_PASSWORD"`
-	PostgresIpAddress string `mapstructure:"POSTGRES_IP_ADDRESS"`
-	PostgresPort      string `mapstructure:"POSTGRES_PORT"`
+	PostgresName     string `mapstructure:"POSTGRES_NAME"`
+	PostgresUser     string `mapstructure:"POSTGRES_USER"`
+	PostgresPassword string `mapstructure:"POSTGRES_PASSWORD"`
+	PostgresHost     string `mapstructure:"POSTGRES_HOST"`
+	PostgresPort     string `mapstructure:"POSTGRES_PORT"`
 }
 
 // LoadConfig reads configuration from environment variables.

@@ -13,10 +13,7 @@ func TestCreateUser(t *testing.T) {
 	got, err := testQueries.CreateUser(context.Background(), want)
 	require.NoError(t, err)
 
-	require.Equal(t, got.Email, want.Email)
-	require.Equal(t, got.Hash, want.Hash)
-	require.Equal(t, got.FirstName, want.FirstName)
-	require.Equal(t, got.LastName, want.LastName)
+	assertUserEqual(t, got, want)
 }
 
 func createRandomUser() CreateUserParams {
@@ -26,4 +23,24 @@ func createRandomUser() CreateUserParams {
 		FirstName: th.RandomString(7),
 		LastName:  th.RandomString(7),
 	}
+}
+
+func TestGetUser(t *testing.T) {
+	want := createRandomUser()
+	_, err := testQueries.CreateUser(context.Background(), want)
+	require.NoError(t, err)
+
+	got, err := testQueries.GetUser(context.Background(), want.Email)
+	require.NoError(t, err)
+
+	assertUserEqual(t, got, want)
+}
+
+func assertUserEqual(t *testing.T, got UserCore, want CreateUserParams) {
+	t.Helper()
+
+	require.Equal(t, got.Email, want.Email)
+	require.Equal(t, got.Hash, want.Hash)
+	require.Equal(t, got.FirstName, want.FirstName)
+	require.Equal(t, got.LastName, want.LastName)
 }
